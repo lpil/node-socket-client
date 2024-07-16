@@ -92,6 +92,8 @@ pub type Event(data) {
   TimeoutEvent
 }
 
+/// Create a UTF-8 encoded socket connection to a given host and port.
+///
 @external(javascript, "./node_socket_client_ffi.mjs", "connect")
 pub fn connect(
   host host: String,
@@ -99,6 +101,31 @@ pub fn connect(
   state state: state,
   handler handler: fn(state, SocketClient, Event(String)) -> state,
 ) -> SocketClient
+
+/// Close the socket gracefully.
+///
+/// This will "half-close" the socket. i.e., it sends a FIN packet. It is
+/// possible the server will still send some data.
+///
+@external(javascript, "./node_socket_client_ffi.mjs", "end")
+pub fn end(socket: SocketClient) -> Nil
+
+/// Close the socket forcefully, once all bufferd data has been written to it.
+///
+/// If the 'finish' event was already emitted the socket is destroyed immediately.
+/// If the socket is still writable it implicitly calls end().
+///
+@external(javascript, "./node_socket_client_ffi.mjs", "destroySoon")
+pub fn destroy_soon(socket: SocketClient) -> Nil
+
+/// Close the socket forcefully, even if there is data in the buffer still to
+/// be written.
+///
+/// If the 'finish' event was already emitted the socket is destroyed immediately.
+/// If the socket is still writable it implicitly calls end().
+///
+@external(javascript, "./node_socket_client_ffi.mjs", "destroy")
+pub fn destroy(socket: SocketClient) -> Nil
 
 /// Sends data on the socket with UTF-8 encoding.
 ///

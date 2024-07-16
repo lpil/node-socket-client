@@ -1,4 +1,4 @@
-import net from "node:net";
+import { Socket } from "node:net";
 import { Ok as OkG, Error as ErrorG } from "./gleam.mjs";
 import {
   CloseEvent,
@@ -19,7 +19,7 @@ import {
 
 export function connect(host, port, initialState, handler) {
   let state = initialState;
-  const socket = new net.Socket();
+  const socket = new Socket();
 
   // Set the socket to unicode mode. A second connect function could be added
   // for non-unicode mode, with the received data being passed to the handler
@@ -57,6 +57,18 @@ export function connect(host, port, initialState, handler) {
 
 export function write(socket, data) {
   return socket.write(data);
+}
+
+export function end(socket) {
+  socket.end();
+}
+
+export function destroy(socket) {
+  socket.destroy();
+}
+
+export function destroySoon(socket) {
+  socket.destroySoon();
 }
 
 const ip = (number) => (number === 6 ? new Ipv6() : new Ipv4());
