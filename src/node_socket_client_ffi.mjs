@@ -33,20 +33,20 @@ export function connect(host, port, initialState, handler) {
   socket.on("close", (hadError) => handle(new CloseEvent(hadError)));
   socket.on("connect", () => handle(new ConnectEvent()));
   socket.on("connectionAttempt", (ip, port, family) =>
-    handle(new CAEvent(ip, port, ip(family))),
+    handle(new CAEvent(ip, port, family)),
   );
   socket.on("connectionAttemptFailed", (ip, port, family, error) =>
-    handle(new CAFailedEvent(ip, port, ip(family), error.toString())),
+    handle(new CAFailedEvent(ip, port, family, error.toString())),
   );
   socket.on("connectionAttemptTimeout", (ip, port, family) =>
-    handle(new CATimeoutEvent(ip, port, ip(family))),
+    handle(new CATimeoutEvent(ip, port, family)),
   );
   socket.on("data", (data) => handle(new DataEvent(data)));
   socket.on("drain", () => handle(new DrainEvent()));
   socket.on("end", () => handle(new EndEvent()));
   socket.on("error", (error) => handle(new ErrorEvent(error.toString())));
   socket.on("lookup", (err, address, family, host) =>
-    handle(new LookupEvent(result(err), address, ip(family), host)),
+    handle(new LookupEvent(result(err), address, family, host)),
   );
   socket.on("ready", () => handle(new ReadyEvent()));
   socket.on("timeout", () => handle(new TimeoutEvent()));
