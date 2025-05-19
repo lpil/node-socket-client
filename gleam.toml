@@ -1,5 +1,5 @@
 name = "node_socket_client"
-version = "1.0.0"
+version = "1.0.1"
 target = "javascript"
 
 description = "Bindings to Node's TCP socket client"
