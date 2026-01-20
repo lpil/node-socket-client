@@ -8,7 +8,7 @@ import gleam/option.{type Option}
 pub type SocketClient
 
 pub type Event(data) {
-  /// Emitted once the socket is fully closed.Bool
+  /// Emitted once the socket is fully closed.
   ///
   /// The argument `had_error` is a bool which says if the socket was closed
   /// due to a transmission error.
@@ -67,8 +67,7 @@ pub type Event(data) {
   /// https://nodejs.org/api/net.html#event-error_1
   ErrorEvent(error: String)
 
-  /// Emitted when an error occurs. The 'close' event will be called directly
-  /// following this event.
+  /// Emitted after resolving the host name but before connecting.
   ///
   /// https://nodejs.org/api/net.html#event-lookup
   LookupEvent(
@@ -110,7 +109,7 @@ pub fn connect(
 @external(javascript, "./node_socket_client_ffi.mjs", "end")
 pub fn end(socket: SocketClient) -> Nil
 
-/// Close the socket forcefully, once all bufferd data has been written to it.
+/// Close the socket forcefully, once all buffered data has been written to it.
 ///
 /// If the 'finish' event was already emitted the socket is destroyed immediately.
 /// If the socket is still writable it implicitly calls end().
