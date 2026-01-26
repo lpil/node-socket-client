@@ -93,12 +93,35 @@ pub type Event(data) {
 
 /// Create a UTF-8 encoded socket connection to a given host and port.
 ///
-@external(javascript, "./node_socket_client_ffi.mjs", "connect")
 pub fn connect(
   host host: String,
   port port: Int,
   state state: state,
   handler handler: fn(state, SocketClient, Event(String)) -> state,
+) -> SocketClient {
+  do_connect(host, port, state, handler, False)
+}
+
+/// Create a binary socket connection to a given host and port.
+///
+/// Unlike `connect`, data events will contain raw `BitArray` data instead of
+/// UTF-8 decoded strings.
+pub fn connect_binary(
+  host host: String,
+  port port: Int,
+  state state: state,
+  handler handler: fn(state, SocketClient, Event(BitArray)) -> state,
+) -> SocketClient {
+  do_connect(host, port, state, handler, True)
+}
+
+@external(javascript, "./node_socket_client_ffi.mjs", "do_connect")
+fn do_connect(
+  host: String,
+  port: Int,
+  state: state,
+  handler: fn(state, SocketClient, Event(data)) -> state,
+  binary: Bool,
 ) -> SocketClient
 
 /// Close the socket gracefully.
@@ -133,6 +156,14 @@ pub fn destroy(socket: SocketClient) -> Nil
 /// 'drain' will be emitted when the buffer is again free.
 @external(javascript, "./node_socket_client_ffi.mjs", "write")
 pub fn write(socket: SocketClient, data: String) -> Bool
+
+/// Sends binary data on the socket.
+///
+/// Returns true if the entire data was flushed successfully to the kernel
+/// buffer. Returns false if all or part of the data was queued in user memory.
+/// 'drain' will be emitted when the buffer is again free.
+@external(javascript, "./node_socket_client_ffi.mjs", "writeBits")
+pub fn write_bits(socket: SocketClient, data: BitArray) -> Bool
 
 pub type ConnectionFamily {
   Ipv6

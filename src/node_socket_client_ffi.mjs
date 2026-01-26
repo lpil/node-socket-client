@@ -1,5 +1,5 @@
 import { Socket } from "node:net";
-import { Ok as OkG, Error as ErrorG } from "./gleam.mjs";
+import { BitArray$BitArray, Ok as OkG, Error as ErrorG } from "./gleam.mjs";
 import {
   CloseEvent,
   ConnectEvent,
@@ -17,14 +17,13 @@ import {
   Ipv4,
 } from "./node_socket_client.mjs";
 
-export function connect(host, port, initialState, handler) {
+export function do_connect(host, port, initialState, handler, binary) {
   let state = initialState;
   const socket = new Socket();
 
-  // Set the socket to unicode mode. A second connect function could be added
-  // for non-unicode mode, with the received data being passed to the handler
-  // as bit arrays.
-  socket.setEncoding("utf8");
+  if (!binary) {
+    socket.setEncoding("utf8");
+  }
 
   const handle = (event) => {
     state = handler(state, socket, event);
@@ -41,7 +40,9 @@ export function connect(host, port, initialState, handler) {
   socket.on("connectionAttemptTimeout", (ip, port, family) =>
     handle(new CATimeoutEvent(ip, port, family)),
   );
-  socket.on("data", (data) => handle(new DataEvent(data)));
+  socket.on("data", (data) =>
+    handle(new DataEvent(binary ? BitArray$BitArray(data) : data)),
+  );
   socket.on("drain", () => handle(new DrainEvent()));
   socket.on("end", () => handle(new EndEvent()));
   socket.on("error", (error) => handle(new ErrorEvent(error.toString())));
@@ -57,6 +58,10 @@ export function connect(host, port, initialState, handler) {
 
 export function write(socket, data) {
   return socket.write(data);
+}
+
+export function writeBits(socket, data) {
+  return socket.write(data.rawBuffer);
 }
 
 export function end(socket) {
