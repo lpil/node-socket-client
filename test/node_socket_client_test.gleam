@@ -2,14 +2,18 @@ import argv
 import gleam/int
 import gleam/io
 import gleam/string
-import gleeunit
 import node_socket_client as socket
 
 pub fn main() {
   case argv.load().arguments {
     ["demo"] -> demo()
     ["demo-binary"] -> demo_binary()
-    _ -> gleeunit.main()
+    _ ->
+      io.println(
+        "Usage:
+  gleam test demo
+  gleam test demo-binary",
+      )
   }
 }
 
