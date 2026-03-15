@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.1.0 - 2026-03-15
 
 - Add binary data support with `connect_binary` and `write_bits` functions
 
